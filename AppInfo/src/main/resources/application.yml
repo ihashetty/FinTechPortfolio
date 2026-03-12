@@ -1,0 +1,59 @@
+# ================================================================
+# NiveshTrack AppInfo Microservice - Configuration
+# ================================================================
+
+spring:
+  application:
+    name: niveshtrack-appinfo
+
+server:
+  port: 8082
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# ================================================================
+# Application Contact Information
+# ================================================================
+app:
+  info:
+    app-name: Nivesh
+    tagline: "Portfolio Intelligence for Indian Retail Investors"
+    version: "1.0.0"
+    support-email: support@niveshtrack.com
+    support-phone: "+91-9876543210"
+    address: "Bengaluru, Karnataka, India"
+    social-links:
+      twitter: "https://twitter.com/niveshtrack"
+      linkedin: "https://linkedin.com/company/niveshtrack"
+      github: "https://github.com/niveshtrack"
+    copyright: "© 2026 NiveshTrack. All rights reserved."
+    terms-url: "https://niveshtrack.com/terms"
+    privacy-url: "https://niveshtrack.com/privacy"
+
+# ================================================================
+# CORS - allowed origins (comma-separated, override via env)
+# ================================================================
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:8080,http://localhost:5173,http://localhost:3000}
+
+# ================================================================
+# Actuator
+# ================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+# ================================================================
+# Logging
+# ================================================================
+logging:
+  level:
+    com.niveshtrack.appinfo: INFO
