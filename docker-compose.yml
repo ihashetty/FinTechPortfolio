@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  # ── MySQL Database ─────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: niveshtrack-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: niveshtrack_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - niveshtrack-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ── Backend (Portfolio API) ────────────────────────────────────
+  backend:
+    image: nitishkr01/niveshtrack-backend:latest
+    container_name: niveshtrack-backend
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/niveshtrack_db?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - niveshtrack-network
+
+  # ── AppInfo Microservice ───────────────────────────────────────
+  appinfo:
+    image: nitishkr01/niveshtrack-appinfo:latest
+    container_name: niveshtrack-appinfo
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      CORS_ORIGINS: http://localhost,http://localhost:8080,http://localhost:5173
+    networks:
+      - niveshtrack-network
+
+  # ── Frontend (React + Nginx) ───────────────────────────────────
+  frontend:
+    image: nitishkr01/niveshtrack-frontend:latest
+    container_name: niveshtrack-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - appinfo
+    networks:
+      - niveshtrack-network
+
+networks:
+  niveshtrack-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
