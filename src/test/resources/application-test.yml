@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:niveshtrack_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+
+  h2:
+    console:
+      enabled: false
+
+  cache:
+    type: none   # disable caching in tests for predictable results
+
+jwt:
+  secret: dGVzdC1zZWNyZXQta2V5LW5pdmVzaHRyYWNrLWp3dC10ZXN0aW5nLTI1Ng==
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+stock-api:
+  alpha-vantage:
+    key: demo
+    base-url: https://www.alphavantage.co/query
+
+logging:
+  level:
+    com.niveshtrack: WARN
+    org.springframework.security: WARN
+    org.hibernate: WARN
